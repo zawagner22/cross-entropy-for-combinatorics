@@ -129,7 +129,8 @@ def calcScore(state):
 
 
 
-
+####No need to change anything below here. 
+####Unless you can manage to numba.njit() the calcScore function, in which case do the same thing for the generate_session function for more speed
 	
 	
 						
