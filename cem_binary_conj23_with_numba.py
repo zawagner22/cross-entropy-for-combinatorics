@@ -12,10 +12,11 @@
 #
 # I used keras version 2.3.1, not sure if this is important, but I recommend this just to be safe.
 
+#This file is showing how to use numba to speed things up, by illustrating it on Conjecture 2.3
+#Use this file as a template if you are able to njit() the the calcScore function in your problem.
 
 
-
-import networkx as nx #for various graph parameters, such as eigenvalues, macthing number, etc
+import networkx as nx #for various graph parameters, such as eigenvalues, macthing number, etc. Does not work with numba (yet)
 import random
 import numpy as np
 from keras.utils import to_categorical
@@ -162,6 +163,8 @@ def calcScore(state):
 
 	return ans
 
+
+####No need to change anything below here. 
 
 jitted_calcScore = njit()(calcScore)
 
