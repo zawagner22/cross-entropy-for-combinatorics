@@ -33,7 +33,7 @@ from numba import njit
 
 
 N = 30   #number of vertices in the graph. Only used in the reward function, not directly relevant to the algorithm 
-MYN = int(N*(N-1)/2)  #The length of the word we are generating. Here we are generating a graph, so we create a 0-1 word of length N choose 2
+MYN = int(N*(N-1)/2)  #The length of the word we are generating. Here we are generating a graph, so we create a 0-1 word of length (N choose 2)
 
 LEARNING_RATE = 0.0001 #Increase this to make convergence faster, decrease if the algorithm gets stuck in local optima too often.
 n_sessions =1000 #number of new sessions per iteration
