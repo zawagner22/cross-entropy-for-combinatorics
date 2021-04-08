@@ -1,5 +1,5 @@
 # cross-entropy-for-combinatorics
-Code accompanying the manuscript "Constructions in combinatorics via neural networks and LP solvers" by A Z Wagner
+Code accompanying the manuscript "Constructions in combinatorics via neural networks" by A Z Wagner
 
 The cem_binary_conj21.py file contains the solution to Conjecture 2.1 in the paper. It does not use numba for speed which makes the code rather slow, but it is enough to find the counterexample given in the paper.
 
