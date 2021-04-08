@@ -22,7 +22,7 @@ import numpy as np
 from keras.utils import to_categorical
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.optimizers import SGD
+from keras.optimizers import SGD, Adam
 from keras.models import load_model
 from statistics import mean
 import pickle
@@ -70,7 +70,7 @@ model.add(Dense(SECOND_LAYER_NEURONS, activation="relu"))
 model.add(Dense(THIRD_LAYER_NEURONS, activation="relu"))
 model.add(Dense(1, activation="sigmoid"))
 model.build((None, observation_space))
-model.compile(loss="binary_crossentropy", optimizer=SGD(learning_rate = LEARNING_RATE))
+model.compile(loss="binary_crossentropy", optimizer=SGD(learning_rate = LEARNING_RATE)) #Adam optimizer also works well, with lower learning rate
 
 print(model.summary())
 
@@ -125,7 +125,7 @@ jitted_bfs = njit()(bfs)
 def calcScore(state):
 	"""
 	Reward function for Conjecture 2.3, using numba
-	With n=30 it takes a few days to converge to the graph in figure 5, I don't think it will ever find the best graph
+	With n=30 it took a day to converge to the graph in figure 5, I don't think it will ever find the best graph
 	(which I believe is when the neigbourhood of that almost middle vertex is one big clique).
 	(This is not the best graph for all n, but seems to be for n=30)
 	
@@ -328,7 +328,7 @@ for i in range(1000000): #1000000 generations should be plenty
 		rewards_batch.append(item)
 	rewards_batch = np.array(rewards_batch)
 	toc = time.time()
-	randomcomp_time = toc-tic
+	randomcomp_time = toc-tic #can probably make this faster by using np.append instead of the stupid thing I did.
 	tic = time.time()
 
 	elite_states, elite_actions = select_elites(states_batch, actions_batch, rewards_batch, percentile=percentile) #pick the sessions to learn from
@@ -369,7 +369,7 @@ for i in range(1000000): #1000000 generations should be plenty
 	print("\n" + str(i) +  ". Best individuals: " + str(np.flip(np.sort(super_rewards))))
 	
 	#uncomment below line to print out how much time each step in this loop takes. 
-	print(	"Mean reward: " + str(mean_all_reward) + "\nSessgen: " + str(sessgen_time) + ", stuff: " + str(randomcomp_time) + ", select1: " + str(select1_time) + ", select2: " + str(select2_time) + ", select3: " + str(select3_time) +  ", fit: " + str(fit_time) + ", score: " + str(score_time)) 
+	print(	"Mean reward: " + str(mean_all_reward) + "\nSessgen: " + str(sessgen_time) + ", other: " + str(randomcomp_time) + ", select1: " + str(select1_time) + ", select2: " + str(select2_time) + ", select3: " + str(select3_time) +  ", fit: " + str(fit_time) + ", score: " + str(score_time)) 
 	
 	
 	if (i%20 == 1): #Write all important info to files every 20 iterations

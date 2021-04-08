@@ -21,7 +21,7 @@ import numpy as np
 from keras.utils import to_categorical
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.optimizers import SGD
+from keras.optimizers import SGD, Adam
 from keras.models import load_model
 from statistics import mean
 import pickle
@@ -68,7 +68,7 @@ model.add(Dense(SECOND_LAYER_NEURONS, activation="relu"))
 model.add(Dense(THIRD_LAYER_NEURONS, activation="relu"))
 model.add(Dense(1, activation="sigmoid"))
 model.build((None, observation_space))
-model.compile(loss="binary_crossentropy", optimizer=SGD(learning_rate = LEARNING_RATE))
+model.compile(loss="binary_crossentropy", optimizer=SGD(learning_rate = LEARNING_RATE)) #Adam optimizer also works well, with lower learning rate
 
 print(model.summary())
 
@@ -87,7 +87,8 @@ def calcScore(state):
 	
 	#Example reward function, for Conjecture 2.1
 	#Given a graph, it minimizes lambda_1 + mu.
-	#Takes about a day to converge (loss < 0.01) on my computer with these parameters if not using parallelization.
+	#Takes a few hours  (between 300 and 10000 iterations) to converge (loss < 0.01) on my computer with these parameters if not using parallelization.
+	#There is a lot of run-to-run variance.
 	#Finds the counterexample some 30% (?) of the time with these parameters, but you can run several instances in parallel.
 	
 	#Construct the graph 
@@ -130,7 +131,6 @@ def calcScore(state):
 
 
 ####No need to change anything below here. 
-####Unless you can manage to numba.njit() the calcScore function, in which case do the same thing for the generate_session function for more speed
 	
 	
 						
@@ -293,7 +293,7 @@ for i in range(1000000): #1000000 generations should be plenty
 		rewards_batch.append(item)
 	rewards_batch = np.array(rewards_batch)
 	toc = time.time()
-	randomcomp_time = toc-tic
+	randomcomp_time = toc-tic #can probably make this faster by using np.append instead of the stupid thing I did.
 	tic = time.time()
 
 	elite_states, elite_actions = select_elites(states_batch, actions_batch, rewards_batch, percentile=percentile) #pick the sessions to learn from
@@ -334,7 +334,7 @@ for i in range(1000000): #1000000 generations should be plenty
 	print("\n" + str(i) +  ". Best individuals: " + str(np.flip(np.sort(super_rewards))))
 	
 	#uncomment below line to print out how much time each step in this loop takes. 
-	print(	"Mean reward: " + str(mean_all_reward) + "\nSessgen: " + str(sessgen_time) + ", stuff: " + str(randomcomp_time) + ", select1: " + str(select1_time) + ", select2: " + str(select2_time) + ", select3: " + str(select3_time) +  ", fit: " + str(fit_time) + ", score: " + str(score_time)) 
+	print(	"Mean reward: " + str(mean_all_reward) + "\nSessgen: " + str(sessgen_time) + ", other: " + str(randomcomp_time) + ", select1: " + str(select1_time) + ", select2: " + str(select2_time) + ", select3: " + str(select3_time) +  ", fit: " + str(fit_time) + ", score: " + str(score_time)) 
 	
 	
 	if (i%20 == 1): #Write all important info to files every 20 iterations
