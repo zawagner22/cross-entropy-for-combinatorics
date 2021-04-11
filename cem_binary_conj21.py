@@ -38,7 +38,7 @@ n_sessions =1000 #number of new sessions per iteration
 percentile = 93 #top 100-X percentile we are learning from
 super_percentile = 94 #top 100-X percentile that survives to next iteration
 
-FIRST_LAYER_NEURONS = 128 #Number of neurons in the hidden layers. More neurons can learn more complex functions, but the process can take longer.
+FIRST_LAYER_NEURONS = 128 #Number of neurons in the hidden layers.
 SECOND_LAYER_NEURONS = 64
 THIRD_LAYER_NEURONS = 4
 
@@ -157,8 +157,7 @@ def generate_session(agent, n_sessions, verbose = 1):
 		step += 1		
 		tic = time.time()
 		prob = agent.predict(states[:,:,step-1], batch_size = n_sessions) 
-		toc = time.time()
-		pred_time += toc-tic
+		pred_time += time.time()-tic
 		
 		for i in range(n_sessions):
 			
@@ -169,8 +168,7 @@ def generate_session(agent, n_sessions, verbose = 1):
 			actions[i][step-1] = action
 			tic = time.time()
 			state_next[i] = states[i,:,step-1]
-			toc = time.time()
-			play_time += toc-tic
+			play_time += time.time()-tic
 			if (action > 0):
 				state_next[i][step-1] = action		
 			state_next[i][MYN + step-1] = 0
@@ -180,13 +178,11 @@ def generate_session(agent, n_sessions, verbose = 1):
 			tic = time.time()
 			if terminal:
 				total_score[i] = calcScore(state_next[i])
-			toc = time.time()
-			scorecalc_time += toc-tic
+			scorecalc_time += time.time()-tic
 			tic = time.time()
 			if not terminal:
 				states[i,:,step] = state_next[i]			
-			toc = time.time()
-			recordsess_time += toc-tic
+			recordsess_time += time.time()-tic
 			
 		
 		if terminal:
@@ -270,55 +266,40 @@ for i in range(1000000): #1000000 generations should be plenty
 	#sessions = Parallel(n_jobs=4)(delayed(generate_session)(model) for j in range(n_sessions))  #performance can be improved with joblib
 	tic = time.time()
 	sessions = generate_session(model,n_sessions,0) #change 0 to 1 to print out how much time each step in generate_session takes 
-	toc = time.time()
-	sessgen_time = toc-tic
+	sessgen_time = time.time()-tic
 	tic = time.time()
-	
 	
 	states_batch = np.array(sessions[0], dtype = int)
 	actions_batch = np.array(sessions[1], dtype = int)
 	rewards_batch = np.array(sessions[2])
 	states_batch = np.transpose(states_batch,axes=[0,2,1])
-
+	
 	states_batch = np.append(states_batch,super_states,axis=0)
 
-	
-	actions_batch= actions_batch.tolist()
-	for item in super_actions:
-		actions_batch.append(item)
-	actions_batch = np.array(actions_batch, dtype = int)
-	
-	rewards_batch= rewards_batch.tolist()
-	for item in super_rewards:
-		rewards_batch.append(item)
-	rewards_batch = np.array(rewards_batch)
-	toc = time.time()
-	randomcomp_time = toc-tic #can probably make this faster by using np.append instead of the stupid thing I did.
+	if i>0:
+		actions_batch = np.append(actions_batch,np.array(super_actions),axis=0)	
+	rewards_batch = np.append(rewards_batch,super_rewards)
+		
+	randomcomp_time = time.time()-tic 
 	tic = time.time()
 
 	elite_states, elite_actions = select_elites(states_batch, actions_batch, rewards_batch, percentile=percentile) #pick the sessions to learn from
-	toc = time.time()
-	select1_time = toc-tic
+	select1_time = time.time()-tic
+
 	tic = time.time()
 	super_sessions = select_super_sessions(states_batch, actions_batch, rewards_batch, percentile=super_percentile) #pick the sessions to survive
+	select2_time = time.time()-tic
 	
-	
-	toc = time.time()
-	select2_time = toc-tic
 	tic = time.time()
-	
 	super_sessions = [(super_sessions[0][i], super_sessions[1][i], super_sessions[2][i]) for i in range(len(super_sessions[2]))]
 	#print(super_sessions)
 	super_sessions.sort(key=lambda super_sessions: super_sessions[2],reverse=True)
-	toc = time.time()
-	select3_time = toc-tic
+	select3_time = time.time()-tic
 	
 	tic = time.time()
-
 	model.fit(elite_states, elite_actions) #learn from the elite sessions
+	fit_time = time.time()-tic
 	
-	toc = time.time()
-	fit_time = toc-tic
 	tic = time.time()
 	
 	super_states = [super_sessions[i][0] for i in range(len(super_sessions))]
@@ -328,9 +309,9 @@ for i in range(1000000): #1000000 generations should be plenty
 	rewards_batch.sort()
 	mean_all_reward = np.mean(rewards_batch[-100:])	
 	mean_best_reward = np.mean(super_rewards)	
-	toc = time.time()
+
+	score_time = time.time()-tic
 	
-	score_time = toc-tic
 	print("\n" + str(i) +  ". Best individuals: " + str(np.flip(np.sort(super_rewards))))
 	
 	#uncomment below line to print out how much time each step in this loop takes. 
@@ -356,6 +337,3 @@ for i in range(1000000): #1000000 generations should be plenty
 		with open('best_species_timeline_txt_'+str(myRand)+'.txt', 'a') as f:
 			f.write(str(super_actions[0]))
 			f.write("\n")
-			
-		
-				
