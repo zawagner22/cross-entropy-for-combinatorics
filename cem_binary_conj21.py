@@ -107,13 +107,13 @@ def calcScore(state):
 		
 	#Calculate the eigenvalues of G
 	evals = np.linalg.eigvalsh(nx.adjacency_matrix(G).todense())
-	evalsRealAbs = np.zeros(len(evals))
+	evalsRealAbs = np.zeros_like(evals)
 	for i in range(len(evals)):
 		evalsRealAbs[i] = abs(evals[i])
+	lambda1 = max(evalsRealAbs)
 	
 	#Calculate the matching number of G
 	maxMatch = nx.max_weight_matching(G)
-	lambda1 = max(evalsRealAbs)
 	mu = len(maxMatch)
 		
 	#Calculate the reward. Since we want to minimize lambda_1 + mu, we return the negative of this.
@@ -263,7 +263,7 @@ myRand = random.randint(0,1000) #used in the filename
 
 for i in range(1000000): #1000000 generations should be plenty
 	#generate new sessions
-	#sessions = Parallel(n_jobs=4)(delayed(generate_session)(model) for j in range(n_sessions))  #performance can be improved with joblib
+	#performance can be improved with joblib
 	tic = time.time()
 	sessions = generate_session(model,n_sessions,0) #change 0 to 1 to print out how much time each step in generate_session takes 
 	sessgen_time = time.time()-tic
@@ -292,7 +292,6 @@ for i in range(1000000): #1000000 generations should be plenty
 	
 	tic = time.time()
 	super_sessions = [(super_sessions[0][i], super_sessions[1][i], super_sessions[2][i]) for i in range(len(super_sessions[2]))]
-	#print(super_sessions)
 	super_sessions.sort(key=lambda super_sessions: super_sessions[2],reverse=True)
 	select3_time = time.time()-tic
 	
