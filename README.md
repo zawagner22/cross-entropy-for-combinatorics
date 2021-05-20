@@ -4,6 +4,6 @@ https://arxiv.org/abs/2104.14516
 
 The cem_binary_conj21.py file contains the solution to Conjecture 2.1 in the paper. The code is rather slow, but it is enough to find the counterexample given in the paper.
 
-The cem_binary_conj23_with_numba.py file contains the solution to Conjecture 2.3. It demonstrates the use of numba to speed up the calculation of the reward. 
+The cem_binary_conj23_with_numba.py file contains the solution to Conjecture 2.3. It uses numba to speed up the calculation of the reward. 
 
 Both of these work on Tensorflow version 1.14.0, Python version 3.6.3, Keras version 2.3.1.
