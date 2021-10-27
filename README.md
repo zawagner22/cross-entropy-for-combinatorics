@@ -23,7 +23,7 @@ Download the code_template.py file. Change the variable `DECISIONS` to the numbe
 
 ### Output
 
-During runtime, the program will display the scores of the best constructions in the current iteration. All the information is also saved every 20 iteration into files, both in pickle and txt formats, in the same folder as the .py file.
+During runtime, the program will display the scores of the best constructions in the current iteration. All the information is also saved every 20 iterations into files, both in pickle and txt formats, in the same folder as the .py file.
 
 
 
