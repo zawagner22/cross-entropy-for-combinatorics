@@ -19,7 +19,7 @@ The cem_binary_conj23_with_numba.py file contains the solution to Conjecture 2.3
 
 Install the versions of Tensorflow, Python, and Keras as above. Note that having higher versions of Tensorflow and Python might drastically reduce the performance of the code.
 
-Download the code_template.py file. Change the variable `DECISIONS` to the number of binary decisions in your problem, and choose the hyperparameters. Next, fill in the reward function for your problem in the `calc_score` function. The input to this function is a 0-1 list of length `DECISIONS`, representing your graph or other object you have created. See demos for examples. Run the program simply with the `python code_template.py` command.
+Download the code_template.py file. Change the variable `DECISIONS` to the number of binary decisions in your problem, and choose the hyperparameters. Next, fill in the reward function for your problem in the `calc_score` function. The input to this function is a 0-1 list of length `DECISIONS`, representing your graph or other object you have created. See demos for examples. Run the program simply with the `python code_template.py` command, no installation is necessary.
 
 ### Output
 
